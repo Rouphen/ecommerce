@@ -1,0 +1,40 @@
+
+curl --request POST \
+  --url http://localhost:3000/auth/register \
+  --header 'Content-Type: application/json' \
+  --data '{
+ "email": "elon@musk.com",
+ "password": "12345678"
+}'
+
+curl --request POST \
+  --url http://localhost:3000/auth/login \
+  --header 'Content-Type: application/json' \
+  --data '{
+ "email": "elon@musk.com",
+ "password": "12345678"
+}'
+
+curl --request POST \
+  --url http://localhost:3000/product/ \
+  --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDUwNDkwNDksImlzcyI6ImF1dGgtc2VydmljZSIsIklkIjoyLCJFbWFpbCI6ImVsb25AbXVzay5jb20ifQ.HbYXYqIzvbLJD6oRcXO53ow86XpqtJWVmJhdThIFJk4' \
+  --header 'Content-Type: application/json' \
+  --data '{
+ "name": "Product A",
+ "stock": 5,
+ "price": 15
+}'
+
+curl --request GET \
+  --url http://localhost:3000/product/1 \
+  --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDUwNDkwNDksImlzcyI6ImF1dGgtc2VydmljZSIsIklkIjoyLCJFbWFpbCI6ImVsb25AbXVzay5jb20ifQ.HbYXYqIzvbLJD6oRcXO53ow86XpqtJWVmJhdThIFJk4'
+
+
+curl --request POST \
+  --url http://localhost:3000/order/ \
+  --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MDUwNDkwNDksImlzcyI6ImF1dGgtc2VydmljZSIsIklkIjoyLCJFbWFpbCI6ImVsb25AbXVzay5jb20ifQ.HbYXYqIzvbLJD6oRcXO53ow86XpqtJWVmJhdThIFJk4' \
+  --header 'Content-Type: application/json' \
+  --data '{
+ "productId": 1,
+ "quantity": 1
+}'  
