@@ -18,13 +18,9 @@ import (
 )
 
 func main() {
-	c, err := config.LoadConfig()
-
-	if err != nil {
-		log.Fatalln("Failed at config", err)
-	}
-
+	c := config.NewConfig().InLocalConfig().InDockerComposeEnv()
 	db, _ := ConnectMySQLByGorm(c.DBUrl)
+
 	productRepo := repo.NewProdcutRepository(db)
 	stocklogRepo := repo.NewStockDecreaseLogsRepository(db)
 
@@ -51,7 +47,6 @@ func ConnectMySQLByGorm(url string) (*gorm.DB, error) {
 
 	if err != nil {
 		log.Fatalln(err)
-		//return nil, err
 	}
 
 	db.AutoMigrate(&domain.Product{})

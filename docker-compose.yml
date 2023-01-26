@@ -1,0 +1,87 @@
+version: '3.1'
+
+services:
+  apigateway:
+    restart: always
+    build: ./apigateway
+    ports:
+      - 3000:3000
+    environment:
+      DB_HOST: datastore
+
+  auth-service:
+    restart: always
+    build: ./auth-service
+    ports:
+      - 50051:50051
+    environment:
+      TZ: Asia/Shanghai
+      MICRO_ADRESS: ":50051"
+      MICRO_REGISTRY: "mdns"
+      DB_NAME: "auth_svc"
+      DB_HOST: datastore
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: 123456
+
+    depends_on:
+      - datastore
+
+  order-service:
+    restart: always
+    build: ./order-service
+    ports:
+      - 50053:50053
+    environment:
+      TZ: Asia/Shanghai
+      MICRO_ADRESS: ":50051"
+      MICRO_REGISTRY: "mdns"
+      DB_NAME: "order_svc"
+      DB_HOST: datastore
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: 123456
+
+    depends_on:
+      - datastore
+
+
+  product-service:
+    restart: always
+    build: ./product-service
+    image: product-service
+    ports:
+      - 50052:50052
+    
+    environment:
+      TZ: Asia/Shanghai
+      MICRO_REGISTRY: "mdns"
+      MICRO_ADDRESS: ":50051"
+      DB_HOST: datastore
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: 123456
+      DB_NAME: product_svc
+    depends_on:
+      - datastore
+
+  datastore:
+    restart: always
+    image: mysql:latest
+    container_name: ecommerce_mysql
+    ports:
+      - "3306:3306"
+    tty: true
+    environment:
+      TZ: Asia/Shanghai
+      MICRO_ADRESS: ":50051"
+      MYSQL_ROOT_PASSWORD: "123456"
+      MYSQL_UER: "root"
+
+    cap_add:
+      - SYS_NICE  # CAP_SYS_NICE
+
+    volumes:
+      - "./db:/var/lib/mysql"
+      - ".conf/my.cnf:/etc/my.cnf"
+      - "./init:/docker-entrypoint-initdb.d/"

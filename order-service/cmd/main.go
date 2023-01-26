@@ -20,12 +20,7 @@ import (
 )
 
 func main() {
-	c, err := config.LoadConfig()
-
-	if err != nil {
-		log.Fatalln("Failed at config", err)
-	}
-
+	c := config.NewConfig().InLocalConfig().InDockerComposeEnv()
 	db, _ := ConnectMySQLByGorm(c.DBUrl)
 	orderRepo := repo.NewOrderRepository(db)
 

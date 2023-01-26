@@ -1,6 +1,10 @@
 package config
 
-import "github.com/spf13/viper"
+import (
+	"os"
+
+	"github.com/spf13/viper"
+)
 
 type Config struct {
 	Port          string `mapstructure:"PORT"`
@@ -9,20 +13,39 @@ type Config struct {
 	OrderSvcUrl   string `mapstructure:"ORDER_SVC_URL"`
 }
 
-func LoadConfig() (c Config, err error) {
+func NewConfig() *Config {
+	return &Config{}
+}
+
+func (c *Config) InLocalConfig() *Config {
 	viper.AddConfigPath("./pkg/config/envs")
 	viper.SetConfigName("dev")
 	viper.SetConfigType("env")
 
 	viper.AutomaticEnv()
 
-	err = viper.ReadInConfig()
-
+	err := viper.ReadInConfig()
 	if err != nil {
-		return
+		return c
 	}
 
 	err = viper.Unmarshal(&c)
+	if err != nil {
+		return c
+	}
 
-	return
+	return c
+}
+
+func (c *Config) InDockerComposeEnv() *Config {
+	aurl := os.Getenv("DB_HOST")
+	if aurl == "" {
+		return c
+	}
+
+	c.AuthSvcUrl = "auth-service:50051"
+	c.ProductSvcUrl = "product-service:50052"
+	c.OrderSvcUrl = "order-service:50053"
+
+	return c
 }

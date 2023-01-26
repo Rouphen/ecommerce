@@ -16,11 +16,7 @@ import (
 )
 
 func main() {
-	c, err := config.LoadConfig()
-
-	if err != nil {
-		log.Fatalln("Failed at config", err)
-	}
+	c := config.NewConfig().InLocalConfig().InDockerComposeEnv()
 
 	db, _ := utils.ConnectMySQLByGorm(c.DBUrl)
 	authRepo := repo.NewUserRepository(db)
